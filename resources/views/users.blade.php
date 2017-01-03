@@ -27,7 +27,7 @@
                         What do you have to say?
                     </h3>
                 </header>
-                <form action="{{ route('post.Create.User')  }}" method="get">
+                <form action="{{ route('userSend')  }}" method="post">
                     <div class="form-group">
                 <textarea name="body" id="new-post" class="form-control" rows="5" title="new-post"
                           placeholder="your post"></textarea>
@@ -59,11 +59,11 @@
                         <a href="#">Like</a> |
                         <a href="#">Dislike</a>
 
-                        {{--@if(Auth::user()->id === $post->user_id)--}}
-                            {{--|--}}
-                            {{--<a class="edit" href="#">Edit</a> |--}}
-                            {{--<a href="{{ route('post.delete', ['post_id' => $post ] )}}">Delete</a>--}}
-                        {{--@endif--}}
+                        @if(Auth::user()->id == $post->user_id)
+                            |
+                            <a class="edit" href="#">Edit</a> |
+                            <a href="{{ route('post.delete', ['post_id' => $post ] )}}">Delete</a>
+                        @endif
 
                     </div>
                 </article>

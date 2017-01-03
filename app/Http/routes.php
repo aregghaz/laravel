@@ -64,7 +64,7 @@ Route::group(['middleware' => ['web']], function () {
 
 
 
-    Route::get('/userSend', [
+    Route::post('/userSend', [
         'uses' => 'PostController@userSendId',
         'as' => 'userSend'
     ]);
