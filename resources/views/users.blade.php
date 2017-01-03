@@ -21,7 +21,14 @@
 
         </div>
 
-            <div class="col-md-6 ">
+
+            @include('includes.users')
+        </section>
+
+
+    <section class="row posts">
+        <div class="col-md-6 col-md-offset-3">
+            <div >
                 <header>
                     <h3>
                         What do you have to say?
@@ -34,40 +41,44 @@
                     </div>
                     <button type="submit" id="sendMessage" class="btn btn-primary">Create Post</button>
                     @foreach((array)$posts as $task)
-                    <input type="hidden" id="inputId" name="idUser" value="{{ $task -> email }}">
+                        <input type="hidden" id="inputId" name="idUser" value="{{ $task -> email }}">
                     @endforeach
                     <input type="hidden" name="_token" value="{{  Session::token() }}">
                 </form>
             </div>
-            @include('includes.users')
-        </section>
-
-
-    <section class="row posts">
-        <div class="col-md-6 col-md-offset-3">
             <header>
-                <h3>What other people say....</h3>
+                <h3 style="color:  #337ab7">What other people say....</h3>
             </header>
 
+
             @foreach($po as $post)
-                <article class="post" >
-                    <p>{{ $post->body }}</p>
-                    <div class="info">
-                        posted by {{$post->name }} on {{ $post->created_at }}
-                    </div>
-                    <div class="interaction">
-                        <a href="#">Like</a> |
-                        <a href="#">Dislike</a>
+                <article class="post" data-postid="{{ $post->id }}" >
 
-                        @if(Auth::user()->id == $post->user_id)
-                            |
-                            <a class="edit" href="#">Edit</a> |
-                            <a href="{{ route('post.delete', ['post_id' => $post ] )}}">Delete</a>
-                        @endif
+            <div class="list-group">
+                <div  class="list-group-item active">
+                    <div s class="list-group-item-heading">{{ $post->body }}</div>
+                    <p class="list-group-item-text">  posted by {{$post->name }} on {{ $post->created_at }}</p>
+                </div>
+                <div class="interaction">
+                    <a href="#">Like</a> |
+                    <a href="#">Dislike</a>
 
-                    </div>
+                    @if(Auth::user()->id == $post->user_id)
+                        |
+                        <a class="edit" href="#">Edit</a> |
+                        <a href="{{ route('post.delete', ['post_id' => $post ] )}}">Delete</a>
+                    @endif
+
+                </div>
+            </div>
+
                 </article>
             @endforeach
+
+
+
+
+
 
         </div>
     </section>
@@ -99,7 +110,7 @@
     <script>
         var token = '{{  Session::token() }}';
         var userUrl = '{{ route('post.Create.User') }}';
-
+        var url = '{{ route('edit') }}';
 
     </script>
 

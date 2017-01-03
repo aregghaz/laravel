@@ -26,6 +26,7 @@ Route::group(['middleware' => ['web']], function () {
     Route::get('/', function () {
         return view('welcome');
     })->name('home');
+
     Route::post('/registration', ['uses' => 'UserController@registration',
         'as' => 'registration'
     ]);
@@ -56,7 +57,7 @@ Route::group(['middleware' => ['web']], function () {
     ]);
 
 
-    Route::post('/edit', [
+    Route::get('/edit', [
         'uses' => 'PostController@postEditPost',
         'as' => 'edit'
     ]);
@@ -77,7 +78,10 @@ Route::group(['middleware' => ['web']], function () {
 
     ]);
 
-
+    Route::get('/userlink', [
+        'uses' => 'PostController@postCreatePostUser',
+        'as' => 'userlink'
+    ]);
 
 });
 

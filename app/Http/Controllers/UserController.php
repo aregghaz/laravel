@@ -44,7 +44,7 @@ Class UserController extends Controller
         ]);
         if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
 
-            return redirect()->route('signIn' );
+            return redirect()->route('post.Create.User')->with(['userId' => $request['email']]);
         }
         return redirect()->back();
     }

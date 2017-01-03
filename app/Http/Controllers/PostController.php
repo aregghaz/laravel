@@ -9,32 +9,32 @@ use Session;
 
 class PostController extends Controller
 {
-    public function getSignIn()
-    {
-        $posts = Post::orderBy('created_at', 'desc')->get();
-        $users = DB::table('users')->get();
-        return view('signIn', ['posts' => $posts], ['users' => $users]);
-    }
-
-    public function postCreatePost(Request $request)
-    {
-        $this->validate($request, [
-            'body' => 'required|max:1000'
-        ]);
-        $post = new Post();
-        $post->body = $request['body'];
-        //$post->email =
-        $message = 'There was an error';
-        if ($request->user()->posts()->save($post)) {
-
-            $message = 'message succesfully send';
-        }
-        return redirect()->route('signIn')->with(['message' => $message]);
-
-
-    }
-
-
+//    public function getSignIn()
+//    {
+//        $posts = Post::orderBy('created_at', 'desc')->get();
+//        $users = DB::table('users')->get();
+//        return view('signIn', ['posts' => $posts], ['users' => $users]);
+//    }
+//
+//    public function postCreatePost(Request $request)
+//    {
+//        $this->validate($request, [
+//            'body' => 'required|max:1000'
+//        ]);
+//        $post = new Post();
+//        $post->body = $request['body'];
+//        //$post->email =
+//        $message = 'There was an error';
+//        if ($request->user()->posts()->save($post)) {
+//
+//            $message = 'message succesfully send';
+//        }
+//        return redirect()->route('signIn')->with(['message' => $message]);
+//
+//
+//    }
+//
+//
 
 
 
@@ -66,7 +66,8 @@ class PostController extends Controller
         }
         $post->body = $request['body'];
         $post->update();
-        return response()->json(['new_body' => $post->body], 200);
+        $message = 'sucsseful 33333333333delete';
+        return response()->json(['new_body' => $post->body, 'message' =>  $message], 200);
     }
 
 
@@ -106,6 +107,7 @@ class PostController extends Controller
         } else {
             $userId = Session::get('userId');
         }
+
         $users = DB::table('users')->get();
         $posts = DB::table('users')->where('email', $userId)->get();
         $po = Post::where('email', $userId)->get();
