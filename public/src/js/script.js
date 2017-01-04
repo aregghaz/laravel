@@ -4,10 +4,10 @@ $('.post').find('.interaction').find('.edit').on('click', function (event) {
     event.preventDefault();
     postBodyElement = event.target.parentNode.parentNode.childNodes[1];
     var postBody = postBodyElement.textContent;
-    postId = event.target.parentNode.parentNode.dataset['postid'];
+    postId = event.target.parentNode.parentNode.parentNode.dataset['postid'];
     $('#post-body').val(postBody);
     $('#edit-model').modal();
-    console.log(event.target.parentNode.parentNode);
+    //console.log(event.target.parentNode.parentNode.parentNode);
 });
 
 $('#modal-save').on('click', function () {
@@ -19,7 +19,7 @@ $('#modal-save').on('click', function () {
         data: {body: $('#post-body').val(), postId: postId, _token: token}
     })
         .done(function (msg,message) {
-            console.log(message);
+
             $(postBodyElement).text(msg['new_body']);
             $('#edit-model').modal('hide');
         });

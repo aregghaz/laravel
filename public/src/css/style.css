@@ -40,3 +40,14 @@ background-color: #c7ffcf;
 #listUsers {
     margin: 0;!important;
 }
+ .alert>ul {
+    margin-bottom: 0;
+    list-style-type: none;
+}
+ .interaction a {
+     color: white;
+ }
+ .links {
+     margin-top: 10px;!important;
+     padding: 0;
+ }

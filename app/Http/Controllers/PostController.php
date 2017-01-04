@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Post;
 use DB;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Session;
 
@@ -66,7 +67,7 @@ class PostController extends Controller
         }
         $post->body = $request['body'];
         $post->update();
-        $message = 'sucsseful 33333333333delete';
+        $message = 'sxal ka';
         return response()->json(['new_body' => $post->body, 'message' =>  $message], 200);
     }
 
@@ -92,7 +93,7 @@ class PostController extends Controller
         $post->name = $name;
         if ($request->user()->posts()->save($post)) {
 
-            $message = 'message succesfully send';
+            $message = 'essage succesfully send';
         }
         return redirect()->route('post.Create.User')->with(['message' =>  $message,'userId' => $userId ]);
 

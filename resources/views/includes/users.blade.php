@@ -2,13 +2,15 @@
     <h3>Users List</h3>
     <ul class="list-group list_users" id="listUsers">
         @foreach((array)$users as $user)
-            <form action="{{ route("post.Create.User")  }}" method="get">
-                <li class="list-group-item">
-                    <button>{{ $user->first_name }} {{ $user->last_name }}
+            <form action="{{ route("post.Create.User")  }}" method="post">
+
+                    <div class="list-group" style="margin-bottom: 0;">
                         <input type="hidden" name="userId" title="title" value="{{ $user->id }}">
                         <input type="hidden" name="userEmail" title="title" value="{{ $user->email }}">
-                    </button>
-                </li>
+                        <button type="submit" class="list-group-item list-group-item-info">{{ $user->first_name }} {{ $user->last_name }}</button>
+
+                    </div>
+
             </form>
         @endforeach
     </ul>

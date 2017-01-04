@@ -5,6 +5,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+
 Class UserController extends Controller
 {
 
@@ -54,5 +55,19 @@ Class UserController extends Controller
         Auth::logout();
         return redirect()->route('home');
     }
-
+    public function getAccount()
+    {
+        return view('account', ['user' => Auth::user() ]);
+    }
+    public function editAccount(Request $request)
+    {
+        $first_name = $request['firstName'];
+        $last_name = $request['lastName'];
+        $users = Posts::where('id', Auth::user()->id)->first();
+var_dump($users);
+        $users[0]->first_name = $first_name;
+        $users[0]->last_name = $last_name;
+        $users[0]->update($users[0]);
+        return redirect()->route('account');
+    }
 }

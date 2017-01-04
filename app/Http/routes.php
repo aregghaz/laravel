@@ -82,6 +82,14 @@ Route::group(['middleware' => ['web']], function () {
         'uses' => 'PostController@postCreatePostUser',
         'as' => 'userlink'
     ]);
+    Route::get('/account', [
+        'uses' => 'UserController@getAccount',
+        'as' => 'account'
+    ]);
+    Route::post('/editAccount', [
+        'uses' => 'UserController@editAccount',
+        'as' => 'edit.account'
+    ]);
 
 });
 
