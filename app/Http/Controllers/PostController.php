@@ -93,27 +93,63 @@ class PostController extends Controller
         $post->name = $name;
         if ($request->user()->posts()->save($post)) {
 
-            $message = 'essage succesfully send';
+            $message = 'Your post successfully add';
         }
-        return redirect()->route('post.Create.User')->with(['message' =>  $message,'userId' => $userId ]);
+        return redirect()->route('post.Create.User')->with(['message' =>  $message,'userId' => $userId]);
 
     }
+
 
 
     public function postCreatePostUser(Request $request)
     {
 
+
         if (!empty($request['userEmail'])) {
             $userId = $request['userEmail'];
-        } else {
+        } else if(Session::get('userId')) {
             $userId = Session::get('userId');
         }
+        else {
+            $userId = Auth::user()->email;
+        }
+
 
         $users = DB::table('users')->get();
         $posts = DB::table('users')->where('email', $userId)->get();
         $po = Post::where('email', $userId)->get();
+
+        if(Session::get('images')) {
+            $images = Session::get('images');
+
+        return view('users', ['users' => $users, 'po' => $po, 'posts' => $posts, 'images' =>  $images]);
+        }
         return view('users', ['users' => $users, 'po' => $po, 'posts' => $posts]);
 
+
+
+
+    }
+
+    public function userAllImage(Request $request)
+    {
+
+        $userEmail = $request['email'];
+        $posts = DB::table('table_image')->where('email',  $userEmail)->get();
+
+
+     return redirect()->route('post.Create.User')->with(['userId' => $userEmail, 'images' => $posts]);
+    }
+    public function profileImage(Request $request)
+    {
+
+        $imageName = $request['imageName'];
+       // var_dump($imageName );
+        $imageNAme2 = DB::table('table_image')->where('name',  $imageName)->value('name');
+       // var_dump($imageNAme2);
+        DB::table('users')->where('email',  Auth::user()->email)->update(['profileImage' => $imageNAme2]);
+
+     return redirect()->route('post.Create.User');
     }
 
 

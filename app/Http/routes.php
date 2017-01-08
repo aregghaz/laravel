@@ -82,14 +82,35 @@ Route::group(['middleware' => ['web']], function () {
         'uses' => 'PostController@postCreatePostUser',
         'as' => 'userlink'
     ]);
+    Route::get('/imagesAll', [
+        'uses' => 'PostController@userAllImage',
+        'as' => 'userImage'
+    ]);
+
+
+
+
+
     Route::get('/account', [
         'uses' => 'UserController@getAccount',
         'as' => 'account'
     ]);
+
+
     Route::post('/editAccount', [
         'uses' => 'UserController@editAccount',
         'as' => 'edit.account'
     ]);
 
+
+    Route::get('/image', [
+        'uses' => "UserController@editAccount",
+        'as' => 'GetImage'
+    ]);
+
+    Route::get('/imageId', [
+        'uses' => "PostController@profileImage",
+        'as' => 'imageId'
+    ]);
 });
 

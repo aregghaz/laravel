@@ -4,7 +4,7 @@
 @endsection
 @section('content')
     @include('includes.message')
-    <form method="post" action="{{ route('edit.account') }}">
+    <form method="post" action="{{ route('edit.account') }}" enctype="multipart/form-data">
         <div class="form-group">
             <label for="lastName">Last Name</label>
             <input type="text" class="form-control" name="lastName" id="lastName" value="{{  $user ->last_name }} ">
@@ -15,7 +15,7 @@
         </div>
         <div class="form-group">
             <label for="inputFile">User image</label>
-            <input type="file" id="File" name="inputFile">
+            <input type="file" id="File" name="image">
         </div>
         <input type="hidden" name="_token" value="{{  Session::token() }}">
         <button type="submit" class="btn btn-primary">Submit</button>

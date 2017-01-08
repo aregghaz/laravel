@@ -18,7 +18,7 @@ $('#modal-save').on('click', function () {
         url: url,
         data: {body: $('#post-body').val(), postId: postId, _token: token}
     })
-        .done(function (msg,message) {
+        .done(function (msg, message) {
 
             $(postBodyElement).text(msg['new_body']);
             $('#edit-model').modal('hide');
@@ -29,7 +29,7 @@ $('#modal-save').on('click', function () {
 $('#listUsers').find('li').find('a').on('click', function (event) {
     var users;
 
-  users = event.target.childNodes[1].value;
+    users = event.target.childNodes[1].value;
     //console.log(users);
     $.ajax({
         method: 'get',
@@ -42,10 +42,9 @@ $('#listUsers').find('li').find('a').on('click', function (event) {
 
 $('#sendMessage').on('click', function (event) {
 
-    var usersId =$('#email').val();
+    var usersId = $('#email').val();
 
-  var asd = $('#inputId').attr('value', usersId);
-
+    var asd = $('#inputId').attr('value', usersId);
 
 
 });

@@ -1,10 +1,14 @@
 <?php
 namespace App\Http\Controllers;
-use DB;
+
+
+use App\Http\Controllers\post;
 use App\User;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Post;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 Class UserController extends Controller
 {
@@ -32,12 +36,12 @@ Class UserController extends Controller
         $user->save();
 
         Auth::login($user);
-        return redirect()->route('signIn');
+        return redirect()->route('post.Create.User')->with(['userId' => $request['email']]);
     }
 
     public function login(Request $request)
     {
-        $email  = $request['email'];
+        $email = $request['email'];
 
         $this->validate($request, [
             'email' => 'required',
@@ -59,7 +63,7 @@ Class UserController extends Controller
     /*       Account         */
     public function getAccount()
     {
-        return view('account', ['user' => Auth::user() ]);
+        return view('account', ['user' => Auth::user()]);
     }
 
     /*     Editing  Account         */
@@ -67,9 +71,30 @@ Class UserController extends Controller
     {
         $first_name = $request['firstName'];
         $last_name = $request['lastName'];
+
         DB::table('users')
             ->where('id', Auth::user()->id)
             ->update(['first_name' => $first_name, 'last_name' => $last_name]);
+        $file = $request->file('image');
+        function random_word()
+        {
+            $symbols = "QWERTYUIOsdfghjklZXCVBNM";
+            $i = 0;
+            $word = "";
+            while ($i < 15) {
+                $word .= $symbols[mt_rand(0, strlen($symbols) - 1)];
+                $i++;
+            }
+            return $word;
+        }
+
+        $fileName = random_word() . ".jpg";
+        DB::table('table_image')->insert(
+            array('email' => Auth::user()->email, 'name' => $fileName));
+        if ($file) {
+            Storage::disk('local')->put($fileName, File::get($file));
+        }
         return redirect()->route('account');
+
     }
 }

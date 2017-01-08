@@ -15,8 +15,11 @@
                 <?php
                 if (Auth::check()) {
                 $emailUs = Auth::user()->email; ?>
-                <p class="navbar-text">Signed in
+                <p class="navbar-text">
+
+                    <img alt="Brand" src="/laravel/storage/app/<?php print_r(Auth::user()-> profileImage); ?>" height="30px" width="30px" class="img-circle">
                     <a href="{{ route('userlink' , ['userEmail' =>  $emailUs ]) }}">
+
                         <?php print_r(Auth::user()->first_name . " " . Auth::user()->last_name); ?>
                     </a>
                     <?php } ?>
@@ -25,10 +28,13 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
+                    <?php  if (Auth::check()) { ?>
                     <li><a href="{{ route('account') }}">Account</a></li>
                     <li><a href="{{ route('logout') }}">Log Out</a></li>
+                    <?php } ?>
                 </ul>
             </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
     </nav>
+
 </header>

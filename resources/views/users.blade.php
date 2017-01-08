@@ -9,42 +9,60 @@
         <div class=" col-md-3 ">
 
 
-            @foreach((array)$posts as  $task)
-                <div class="thumbnail">
+            <div class="thumbnail">
+
+
+
+                @foreach((array)$posts as  $task)
+                    @if(empty($task-> profileImage ))
                     <img src="{{  URL::to('src/image/1.jpg') }}" width="240px" height="180px" alt="...">
+                    @else
+                        <img src="/laravel/storage/app/{{$task-> profileImage }} "  alt="">
+                   @endif
+
+
                     <div class="caption">
                         <h4>{{$task -> first_name }} {{$task -> last_name }}</h4>
                         <p>{{ $task -> email }}</p>
-                        <input type="hidden" title="" name="Email" id="email" value="{{ $task -> email }}">
                         <button class="btn btn-primary" type="button">Messages <span class="badge">4</span>
                         </button>
-                        <button class="btn btn-primary" type="button">Add Friend</button>
+                        @if(Auth::user()->id !== $task -> id )
+                            <button class="btn btn-primary" type="button">Add Friend</button>
+                        @endif
+                        <form action="{{ route("userImage") }}" method="get">
+                            <input type="hidden" name="email" value="{{ $task -> email }}">
+                            <input type="hidden" name="_token" value="{{  Session::token() }}">
+                            <button class="btn btn-primary" type="submit">Image</button>
+                        </form>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+
+            </div>
+
 
         </div>
 
         <div class="col-md-6 ">
 
-                <header>
-                    <h3>
-                        What do you have to say?
-                    </h3>
-                </header>
-                <form action="{{ route('userSend')  }}" method="post">
-                    <div class="form-group">
+            <header>
+                <h3>
+                    What do you have to say?
+                </h3>
+            </header>
+            <form action="{{ route('userSend')  }}" method="post">
+                <div class="form-group">
                 <textarea name="body" id="new-post" class="form-control" rows="5" title="new-post"
-                          placeholder="your post" ></textarea>
-                    </div>
-                    <button type="submit" id="sendMessage" class="btn btn-primary">Create Post</button>
-                    @foreach((array)$posts as $task)
-                        <input type="hidden" id="inputId" name="idUser" value="{{ $task -> email }}">
-                    @endforeach
-                    <input type="hidden" name="_token" value="{{  Session::token() }}">
-                </form>
-            </div>
+                          placeholder="your post"></textarea>
+                </div>
+                <button type="submit" id="sendMessage" class="btn btn-primary">Create Post</button>
+                @foreach((array)$posts as $task)
+                    <input type="hidden" id="inputId" name="idUser" value="{{ $task -> email }}">
+                @endforeach
+                <input type="hidden" name="_token" value="{{  Session::token() }}">
+            </form>
+        </div>
         @include('includes.users')
+        @include('includes.image')
     </section>
 
 
@@ -58,10 +76,11 @@
             @foreach($po as $post)
                 <article class="post" data-postid="{{ $post->id }}">
                     <div class="list-group-item active">
-                            <p class="list-group-item-heading">{{ $post->body }}</p>
+                        <p class="list-group-item-text"> posted by  <img alt="Brand" src="/laravel/storage/app/{{$task-> profileImage }}" height="20px" width="20px" >{{$post->name }} on {{ $post->created_at }}</p>
+
+                        <p class="list-group-item-heading">{{ $post->body }}</p>
 
 
-                        <p class="list-group-item-text"> posted by {{$post->name }} on {{ $post->created_at }}</p>
                         <div class="interaction">
                             <a href="#">Like</a> |
                             <a href="#">Dislike</a>
@@ -81,6 +100,7 @@
 
         </div>
     </section>
+
     <div class="modal fade" tabindex="-1" role="dialog" id="edit-model">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -110,6 +130,7 @@
         var token = '{{  Session::token() }}';
         var userUrl = '{{ route('post.Create.User') }}';
         var url = '{{ route('edit') }}';
+
 
     </script>
 
