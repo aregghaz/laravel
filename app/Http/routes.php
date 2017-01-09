@@ -112,5 +112,45 @@ Route::group(['middleware' => ['web']], function () {
         'uses' => "PostController@profileImage",
         'as' => 'imageId'
     ]);
+    Route::post('/addFriend', [
+        'uses' => "PostController@addFriend",
+        'as' => 'addFriend'
+    ]);
+    Route::post('/sendMessage', [
+        'uses' => "PostController@sendMessage",
+        'as' => 'sendMessage'
+    ]);
+    Route::post('/inbox', [
+        'uses' => "PostController@inbox",
+        'as' => 'inbox'
+    ]);
+    Route::post
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ('/showMessage', [
+        'uses' => "PostController@showMessage",
+        'as' => 'show.message'
+    ]);
 });
 

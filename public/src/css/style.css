@@ -69,3 +69,6 @@ background-color: #c7ffcf;
 
     width: 105%!important;
 }
+.freand {
+    display: inline-flex;
+}

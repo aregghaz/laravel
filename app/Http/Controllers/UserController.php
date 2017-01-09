@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Storage;
 
 Class UserController extends Controller
 {
-
     public function registration(Request $request)
     {
         $this->validate($request, [
@@ -21,20 +20,16 @@ Class UserController extends Controller
             'last_name' => 'required|max:30',
             'password' => 'required|min:4'
         ]);
-
         $email = $request['email'];
         $first_name = $request['first_name'];
         $last_name = $request['last_name'];
         $password = bcrypt($request['password']);
-
         $user = new User();
         $user->email = $email;
         $user->first_name = $first_name;
         $user->last_name = $last_name;
         $user->password = $password;
-
         $user->save();
-
         Auth::login($user);
         return redirect()->route('post.Create.User')->with(['userId' => $request['email']]);
     }
@@ -42,7 +37,6 @@ Class UserController extends Controller
     public function login(Request $request)
     {
         $email = $request['email'];
-
         $this->validate($request, [
             'email' => 'required',
             'password' => 'required'
@@ -71,7 +65,6 @@ Class UserController extends Controller
     {
         $first_name = $request['firstName'];
         $last_name = $request['lastName'];
-
         DB::table('users')
             ->where('id', Auth::user()->id)
             ->update(['first_name' => $first_name, 'last_name' => $last_name]);
