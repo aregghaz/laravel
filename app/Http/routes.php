@@ -120,10 +120,7 @@ Route::group(['middleware' => ['web']], function () {
         'uses' => "PostController@inbox",
         'as' => 'inbox'
     ]);
-    Route::get('/showMessage', [
-        'uses' => "PostController@showMessage",
-        'as' => 'show.message'
-    ]);
+
     Route::post('/Message', [
         'uses' => "PostController@message",
         'as' => 'Message'

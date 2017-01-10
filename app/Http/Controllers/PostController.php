@@ -10,6 +10,33 @@ use Session;
 
 class PostController extends Controller
 {
+    /* Creating post for users and returning view users */
+    public function postCreatePostUser(Request $request)
+    {
+
+        if (!empty($request['userEmail'])) {
+            $userId = $request['userEmail'];
+        } else if (Session::get('userId')) {
+            $userId = Session::get('userId');
+        } else {
+            $userId = Auth::user()->email;
+        }
+        $friends = DB::table('freands')->where('my_email', Auth::user()->email)->lists('freand_email');
+        $usersFriend = DB::table('users')->whereIn('email', $friends)->get();
+        $users = DB::table('users')->get();
+        $posts = DB::table('users')->where('email', $userId)->get();
+        $like = DB::table('likes')->where('email', $userId)->lists('post_id');
+        $po = Post::where('email', $userId)->get();
+        if (Session::get('images')) {
+            $images = Session::get('images');
+            return view('users', ['users' => $users, 'po' => $po, 'posts' => $posts, 'images' => $images, 'friend' => $usersFriend, 'like' => $like ]);
+        }
+        return view('users', ['users' => $users, 'po' => $po, 'posts' => $posts, 'friend' => $usersFriend, 'like' => $like]);
+    }
+
+
+
+    /* deleting posts by id */
     public function getDeletePost($post_id)
     {
         $userId = DB::table('posts')->where('id', $post_id)->value('email');
@@ -21,7 +48,7 @@ class PostController extends Controller
         return redirect()->route('post.Create.User')->with(['message' => 'Succesfulle Delete', 'userId' => $userId]);
     }
 
-
+    /* editing  posts  */
     public function postEditPost(Request $request)
     {
         $this->validate($request, [
@@ -37,7 +64,7 @@ class PostController extends Controller
         return response()->json(['new_body' => $post->body, 'message' => $message], 200);
     }
 
-
+    /* sending posts to data base */
     public function userSendId(Request $request)
     {
         $this->validate($request, [
@@ -61,31 +88,7 @@ class PostController extends Controller
 
     }
 
-
-    public function postCreatePostUser(Request $request)
-    {
-        if (!empty($request['userEmail'])) {
-            $userId = $request['userEmail'];
-        } else if (Session::get('userId')) {
-            $userId = Session::get('userId');
-        } else {
-            $userId = Auth::user()->email;
-        }
-
-        $friends = DB::table('freands')->where('my_email', Auth::user()->email)->lists('freand_email');
-        $usersFriend = DB::table('users')->whereIn('email', $friends)->get();
-
-        $users = DB::table('users')->get();
-        $posts = DB::table('users')->where('email', $userId)->get();
-
-        $po = Post::where('email', $userId)->get();
-        if (Session::get('images')) {
-            $images = Session::get('images');
-            return view('users', ['users' => $users, 'po' => $po, 'posts' => $posts, 'images' => $images, 'friend' => $usersFriend]);
-        }
-        return view('users', ['users' => $users, 'po' => $po, 'posts' => $posts, 'friend' => $usersFriend]);
-    }
-
+    /* geting all image users */
     public function userAllImage(Request $request)
     {
         $userEmail = $request['email'];
@@ -93,6 +96,7 @@ class PostController extends Controller
         return redirect()->route('post.Create.User')->with(['userId' => $userEmail, 'images' => $posts]);
     }
 
+    /* seting profile image */
     public function profileImage(Request $request)
     {
         $imageName = $request['imageName'];
@@ -101,6 +105,7 @@ class PostController extends Controller
         return redirect()->route('post.Create.User');
     }
 
+    /* add friends */
     public function addFriend(Request $request)
     {
         $userEmail = $request['friendEmail'];
@@ -109,54 +114,52 @@ class PostController extends Controller
         return redirect()->route('post.Create.User');
     }
 
+    /* sending message to users in profile */
     public function sendMessage(Request $request)
     {
         $message = $request['messageText'];
         $toUserID = $request['userId'];
         $fromUserId = Auth::user()->id;
-        $created_at = strftime("%F %T");
+        $created_at = date('Y-m-d');
         DB::table('messages')->insert(['from_id' => $fromUserId, 'to_id' => $toUserID, 'message' => $message, 'created_at' => $created_at]);
         return redirect()->route('post.Create.User');
     }
 
-    public function inbox()
+
+    /*creating inbox  */
+    public function inbox(Request $request)
     {
+        if (empty(Session::get('userId'))) {
+            $userId = $request['userId'];
+        }else{
+            $userId = Session::get('userId');
+        }
+
 
         $friends = DB::table('freands')->where(['my_email' => Auth::user()->email])->lists('freand_email');
         $friend = DB::table('users')->whereIn('email', $friends)->get();
-        if (Session::get('message')) {
-            $message = Session::get('message');
-            $user = Session::get('user');
-            $userId = Session::get('userId');
-
-            return view('includes.inbox_message', ['friends' => $friend, 'message' => $message, 'user' => $user, 'userId' => $userId]);
-        } else {
-            return view('includes.inbox_message', ['friends' => $friend]);
-        }
-    }
-
-
-    public function showMessage(Request $request)
-    {
-        $userId = $request['userId'];
         $user = DB::table('users')->where('id', $userId)->get();
-        $message = DB::table('messages')->where(['from_id' => Auth::user()->id, 'to_id' => $request['userId']])->orWhere(['from_id' => $request['userId'], 'to_id' => Auth::user()->id])->get();
-        return redirect()->route('inbox')->with(['message' => $message, 'user' => $user, 'userId' => $userId]);
+        $message = DB::table('messages')->where(['from_id' => Auth::user()->id, 'to_id' =>$userId])->orWhere(['from_id' => $userId, 'to_id' => Auth::user()->id])->get();
+        return view('includes.inbox_message', ['friends' => $friend, 'message' => $message, 'user' => $user, 'userId' => $userId]);
     }
 
+
+    /* sending message to users in inbox  */
     public function message(Request $request)
     {
         $message = $request['messageText'];
         $toUserID = $request['userId'];
         $fromUserId = Auth::user()->id;
-        $created_at = strftime("%F %T");
+        $created_at = date("Y-m-d H:i:s");
         DB::table('messages')->insert(['from_id' => $fromUserId, 'to_id' => $toUserID, 'message' => $message, 'created_at' => $created_at]);
-        return redirect()->route('inbox');
+        return redirect()->route('inbox')->with(['userId' => $toUserID]);
     }
 
+    /* like or dislike  */
     public function like(Request $request)
     {
         $postId = $request['postId'];
+        $postEmail = $request['email'];
         $isLike = $request['isLike'] === 'true';
         $update = false;
         $post = Post::find($postId);
@@ -176,12 +179,13 @@ class PostController extends Controller
                 $like->delete();
                 return null;
             }
-        }else {
+        } else {
             $like = new Like();
         }
         $like->like = $isLike;
         $like->user_id = $user->id;
         $like->post_id = $post->id;
+        $like->email = $postEmail;
         if ($update) {
             $like->update();
         } else {

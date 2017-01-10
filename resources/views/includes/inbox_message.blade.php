@@ -7,7 +7,7 @@
         <div class="list-group">
             @if(!empty($friends))
                 @foreach($friends as $key)
-                    <div class="panel panel-primary"><a href="{{ route('show.message',['userId' => $key->id]) }}"
+                    <div class="panel panel-primary"><a href="{{ route('inbox',['userId' => $key->id]) }}"
                                                         class="list-group-item">{{ $key->first_name }} {{ $key->last_name }}</a>
                     </div>
                 @endforeach
@@ -24,20 +24,15 @@
                         </div>
                         <span class="label label-primary">
                             Sending at {{$item->created_at }} by
-
                             <?php if ($item->from_id == Auth::user()->id) {
-
-
                                 echo Auth::user()->last_name . "" . Auth::user()->first_name;
                             } else {
                                 foreach ($user as $key) {
-
                                     echo $key->last_name . " " . $key->first_name;
                                 }
                             }
                             ?>
-
-                           </span>
+                        </span>
                     </div>
                 @endforeach
             @else
@@ -52,11 +47,11 @@
             </div>
             <?php
             if(!empty($userId)) {  ?>
-            <input type="hidden" name="userId" value="<?php echo $userId;?>">
+            <input type="hidden" id="userId" name="userId" value="<?php echo $userId;?>">
             <?php } ?>
             <div class="form-group">
 
-                <button type="submit" class="btn btn-primary">Send Message</button>
+                <button type="submit" id="inboxMessage" class="btn btn-primary">Send Message</button>
             </div>
             <input type="hidden" name="_token" value="{{  Session::token() }}">
         </form>
