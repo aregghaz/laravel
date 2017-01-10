@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePostTable extends Migration
+class CreateUsersMessage extends Migration
 {
     /**
      * Run the migrations.
@@ -12,13 +12,12 @@ class CreatePostTable extends Migration
      */
     public function up()
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('from_id');
+            $table->integer('to_id');
+            $table->text('message');
             $table->timestamps();
-            $table->text('body');
-            $table->text('email');
-            $table->text('name');
-            $table->integer('user_id');
 
         });
     }
@@ -30,6 +29,6 @@ class CreatePostTable extends Migration
      */
     public function down()
     {
-        Schema::drop('posts');
+        Schema::drop('messages');
     }
 }

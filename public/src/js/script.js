@@ -15,7 +15,7 @@ $('#modal-save').on('click', function () {
     //console.log(postId);
     $.ajax({
         method: 'get',
-        url: url,
+        url: urlEdit,
         data: {body: $('#post-body').val(), postId: postId, _token: token}
     })
         .done(function (msg, message) {
@@ -47,4 +47,24 @@ $('#sendMessage').on('click', function (event) {
     var asd = $('#inputId').attr('value', usersId);
 
 
+});
+$('.like').on('click', function (event) {
+    event.preventDefault();
+    postId = event.target.parentNode.parentNode.parentNode.dataset['postid'];
+    console.log(postId);
+    var isLike = event.target.previousElementSibling == null ? true : false;
+    $.ajax({
+        method: "POST",
+        url: urlLike,
+        data: {isLike: isLike, postId: postId, _token: token}
+    })
+        .done(function () {
+            event.target.innerText = isLike ? event.target.innerText == 'Like' ? "You like this post" : 'Like' : event.target.innerText == 'Dislike' ? 'You don`t like this posts': 'Dislike';
+        if(isLike) {
+            event.target.nextElementSibling.innerText = 'Dislike';
+        }
+        else {
+            event.target.previousElementSibling.innerText = 'Like';
+        }
+        });
 });

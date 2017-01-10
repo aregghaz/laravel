@@ -27,13 +27,16 @@ Route::group(['middleware' => ['web']], function () {
         return view('welcome');
     })->name('home');
 
-    Route::post('/registration', ['uses' => 'UserController@registration',
+    Route::post('/registration', [
+        'uses' => 'UserController@registration',
         'as' => 'registration'
     ]);
-    Route::post('/login', ['uses' => 'UserController@login',
+    Route::post('/login', [
+        'uses' => 'UserController@login',
         'as' => 'login'
     ]);
-    Route::get('/signIn', ['uses' => 'PostController@getSignIn',
+    Route::get('/signIn', [
+        'uses' => 'PostController@getSignIn',
         'as' => 'signIn',
         'middleware' => 'auth'
     ]);
@@ -63,13 +66,10 @@ Route::group(['middleware' => ['web']], function () {
     ]);
 
 
-
-
     Route::post('/userSend', [
         'uses' => 'PostController@userSendId',
         'as' => 'userSend'
     ]);
-
 
 
     Route::get('/createPostUser', [
@@ -86,10 +86,6 @@ Route::group(['middleware' => ['web']], function () {
         'uses' => 'PostController@userAllImage',
         'as' => 'userImage'
     ]);
-
-
-
-
 
     Route::get('/account', [
         'uses' => 'UserController@getAccount',
@@ -120,37 +116,21 @@ Route::group(['middleware' => ['web']], function () {
         'uses' => "PostController@sendMessage",
         'as' => 'sendMessage'
     ]);
-    Route::post('/inbox', [
+    Route::get('/inbox', [
         'uses' => "PostController@inbox",
         'as' => 'inbox'
     ]);
-    Route::post
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    ('/showMessage', [
+    Route::get('/showMessage', [
         'uses' => "PostController@showMessage",
         'as' => 'show.message'
+    ]);
+    Route::post('/Message', [
+        'uses' => "PostController@message",
+        'as' => 'Message'
+    ]);
+    Route::post('/like', [
+        'uses' => "PostController@like",
+        'as' => 'like'
     ]);
 });
 

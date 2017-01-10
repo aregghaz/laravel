@@ -1,10 +1,10 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Like;
 use App\Post;
 use DB;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Session;
 
@@ -71,10 +71,13 @@ class PostController extends Controller
         } else {
             $userId = Auth::user()->email;
         }
+
         $friends = DB::table('freands')->where('my_email', Auth::user()->email)->lists('freand_email');
         $usersFriend = DB::table('users')->whereIn('email', $friends)->get();
+
         $users = DB::table('users')->get();
         $posts = DB::table('users')->where('email', $userId)->get();
+
         $po = Post::where('email', $userId)->get();
         if (Session::get('images')) {
             $images = Session::get('images');
@@ -111,7 +114,8 @@ class PostController extends Controller
         $message = $request['messageText'];
         $toUserID = $request['userId'];
         $fromUserId = Auth::user()->id;
-        DB::table('messages')->insert(['from_id' => $fromUserId, 'to_id' => $toUserID, 'message' => $message]);
+        $created_at = strftime("%F %T");
+        DB::table('messages')->insert(['from_id' => $fromUserId, 'to_id' => $toUserID, 'message' => $message, 'created_at' => $created_at]);
         return redirect()->route('post.Create.User');
     }
 
@@ -120,11 +124,13 @@ class PostController extends Controller
 
         $friends = DB::table('freands')->where(['my_email' => Auth::user()->email])->lists('freand_email');
         $friend = DB::table('users')->whereIn('email', $friends)->get();
-        if(Session::get('message')){
-            $message= Session::get('message');
-        return view('includes.inbox_message', ['friends' => $friend, 'message' => $message ]);
-        }
-        else {
+        if (Session::get('message')) {
+            $message = Session::get('message');
+            $user = Session::get('user');
+            $userId = Session::get('userId');
+
+            return view('includes.inbox_message', ['friends' => $friend, 'message' => $message, 'user' => $user, 'userId' => $userId]);
+        } else {
             return view('includes.inbox_message', ['friends' => $friend]);
         }
     }
@@ -132,8 +138,56 @@ class PostController extends Controller
 
     public function showMessage(Request $request)
     {
-       $userId = $request['userId'];
-       $message =  DB::table('messages')->where(['from_id' =>Auth::user()->id, 'to_id' =>  $userId ])->get();
-        return redirect()->route('inbox')->with(['message' => $message ]);
+        $userId = $request['userId'];
+        $user = DB::table('users')->where('id', $userId)->get();
+        $message = DB::table('messages')->where(['from_id' => Auth::user()->id, 'to_id' => $request['userId']])->orWhere(['from_id' => $request['userId'], 'to_id' => Auth::user()->id])->get();
+        return redirect()->route('inbox')->with(['message' => $message, 'user' => $user, 'userId' => $userId]);
+    }
+
+    public function message(Request $request)
+    {
+        $message = $request['messageText'];
+        $toUserID = $request['userId'];
+        $fromUserId = Auth::user()->id;
+        $created_at = strftime("%F %T");
+        DB::table('messages')->insert(['from_id' => $fromUserId, 'to_id' => $toUserID, 'message' => $message, 'created_at' => $created_at]);
+        return redirect()->route('inbox');
+    }
+
+    public function like(Request $request)
+    {
+        $postId = $request['postId'];
+        $isLike = $request['isLike'] === 'true';
+        $update = false;
+        $post = Post::find($postId);
+        if (!$post) {
+            return null;
+        }
+        $user = Auth::user();
+        $like = $user->likes()->where('post_id', $postId)->first();
+
+
+        if ($like) {
+            $already_like = $like->like;
+            $update = true;
+
+            if ($already_like == $isLike) {
+
+                $like->delete();
+                return null;
+            }
+        }else {
+            $like = new Like();
+        }
+        $like->like = $isLike;
+        $like->user_id = $user->id;
+        $like->post_id = $post->id;
+        if ($update) {
+            $like->update();
+        } else {
+            $like->save();
+        }
+
+        return null;
     }
 }

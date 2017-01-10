@@ -57,7 +57,7 @@
                                 <input type="hidden" name="_token" value="{{  Session::token() }}">
                             </form>
                             @else
-                            <form action="{{ route('inbox') }}" method="post">
+                            <form action="{{ route('inbox') }}" method="get">
                             <button class="btn btn-primary"  type="submit">inbox</button>
 
                                 <input type="hidden" name="_token" value="{{  Session::token() }}">
@@ -79,8 +79,7 @@
             </header>
             <form action="{{ route('userSend')  }}" method="post">
                 <div class="form-group">
-                <textarea name="body" id="new-post" class="form-control" rows="5" title="new-post"
-                          placeholder="your post"></textarea>
+                <textarea name="body" id="new-post" class="form-control" rows="5" title="new-post"></textarea>
                 </div>
                 <button type="submit" id="sendMessage" class="btn btn-primary">Create Post</button>
                 @foreach((array)$posts as $task)
@@ -109,8 +108,8 @@
                         </p>
                         <p class="list-group-item-heading">{{ $post->body }}</p>
                         <div class="interaction">
-                            <a href="#">Like</a> |
-                            <a href="#">Dislike</a>
+                            <a href="#" class="like">{{ Auth::user()->likes()->where('post_id', $post->id)->first() ? Auth::user()->likes()->where('post_id', $post->id)->first()->like == 1 ? 'You like this post': 'like' : 'Like' }}</a> |
+                            <a href="#" class="like">{{ Auth::user()->likes()->where('post_id', $post->id)->first() ? Auth::user()->likes()->where('post_id', $post->id)->first()->like == 0 ? 'You don`t like this post': 'Dislike' : 'Dislike' }}</a>
                             @if(Auth::user()->id == $post->user_id)
                                 |
                                 <a class="edit" href="#">Edit</a> |
@@ -148,6 +147,7 @@
     <script>
         var token = '{{  Session::token() }}';
         var userUrl = '{{ route('post.Create.User') }}';
-        var url = '{{ route('edit') }}';
+        var urlEdit = '{{ route('edit') }}';
+        var urlLike = '{{ route('like') }}';
     </script>
 @endsection

@@ -12,7 +12,7 @@
 
         @endforeach
     @else
-        you have no friends
+        You don't have friends yet
     @endif
 
 
