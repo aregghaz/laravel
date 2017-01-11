@@ -1,24 +1,30 @@
 @extends('page.index')
 @section('title')
-    welcome!!!!!!!!!!!!!!!!!!!!!
+    Home
 @endsection
 @section('content')
     @include('includes.message')
     <section class="row new-post">
         <div class=" col-md-3 ">
             <div class="thumbnail">
-                @foreach((array)$posts as  $task)
+                <!--  getting user information  -->
+            @foreach((array)$userInfo as  $task)
+
+                    <!--  checking if user don't have profile image seting defult image for profile  -->
                     @if(empty($task-> profileImage ))
                         <img src="{{  URL::to('src/image/1.jpg') }}" width="240px" height="180px" alt="...">
-                    @else
+                            <!--  if user  have profile getting  profile image user -->
+                        @else
                         <img src="/laravel/storage/app/{{$task-> profileImage }} " alt="">
                     @endif
+                    <!--  user info -->
                     <div class="caption">
                         <h4>{{$task -> first_name }} {{$task -> last_name }}</h4>
                         <p>{{ $task -> email }}</p>
+                        <!--  checking if it not Auth user  -->
                         @if(Auth::user()->id !== $task -> id )
                             <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#myModal">
-                                Messages <span class="badge">4</span>
+                                Messages
                             </button>
                             <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
                                  aria-labelledby="myModalLabel">
@@ -31,10 +37,8 @@
                                         </div>
                                         <form action="{{ route('sendMessage') }}" method="post">
                                             <div class="modal-body">
-                                            <textarea name="messageText" id="messageText" class="form-control" rows="5"
-                                                      title="message">
-
-                                            </textarea>
+                                                <textarea name="messageText" id="messageText" class="form-control"
+                                                          rows="5" title="message"></textarea>
                                             </div>
                                             <input type="hidden" name="userId" value="{{ $task -> id }}">
                                             <div class="modal-footer">
@@ -48,6 +52,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <!--  Adding friend  -->
                             <form action="{{ route('addFriend') }}" method="post">
                                 <input type="hidden" name="friendEmail" value="{{ $task-> email }}">
 
@@ -56,15 +61,15 @@
 
                                 <input type="hidden" name="_token" value="{{  Session::token() }}">
                             </form>
-                            @else
-                            <form action="{{ route('inbox') }}" method="post">
-                            <button class="btn btn-primary"  type="submit">inbox</button>
-
+                        @else
+                        <!--  if it  Auth user  -->
+                            <form action="{{ route('inbox') }}" method="get">
+                                <button class="btn btn-primary" type="submit">inbox</button>
                                 <input type="hidden" name="_token" value="{{  Session::token() }}">
                             </form>
                         @endif
                         <form action="{{ route("userImage") }}" method="get">
-                            <input type="hidden" name="email" value="{{ $task -> email }}">
+                            <input type="hidden" name="email" id="userEmailforLike" value="{{ $task -> email }}">
                             <input type="hidden" name="_token" value="{{  Session::token() }}">
                             <button class="btn btn-primary" type="submit">Image</button>
                         </form>
@@ -72,18 +77,17 @@
                 @endforeach
             </div>
         </div>
-
+        <!--  setting send post  -->
         <div class="col-md-6 ">
             <header>
                 <h3>What do you have to say?</h3>
             </header>
             <form action="{{ route('userSend')  }}" method="post">
                 <div class="form-group">
-                <textarea name="body" id="new-post" class="form-control" rows="5" title="new-post"
-                          placeholder="your post"></textarea>
+                    <textarea name="body" id="new-post" class="form-control" rows="5" title="new-post"></textarea>
                 </div>
                 <button type="submit" id="sendMessage" class="btn btn-primary">Create Post</button>
-                @foreach((array)$posts as $task)
+                @foreach((array)$userInfo as $task)
                     <input type="hidden" id="inputId" name="idUser" value="{{ $task -> email }}">
                 @endforeach
                 <input type="hidden" name="_token" value="{{  Session::token() }}">
@@ -92,30 +96,45 @@
         @include('includes.users')
         @include('includes.image')
         @include('includes.friend')
-
     </section>
-
     <section class="row posts">
         <div class="col-md-6 col-md-offset-3">
             <header>
                 <h3 style="color:  #337ab7">What other people say....</h3>
             </header>
-            @foreach($po as $post)
+            @foreach($posts as $post)
                 <article class="post" data-postid="{{ $post->id }}">
                     <div class="list-group-item active">
-                        <p class="list-group-item-text"> posted by
-                            <img alt="Brand" src="/laravel/storage/app/{{$task-> profileImage }}" height="20px"
-                                 width="20px">{{$post->name }}on {{ $post->created_at }}
-                        </p>
                         <p class="list-group-item-heading">{{ $post->body }}</p>
+                        <p class="list-group-item-text"> posted by
+                            {{$post->name }}on {{ $post->created_at }}
+                        </p>
                         <div class="interaction">
-                            <a href="#">Like</a> |
-                            <a href="#">Dislike</a>
+
+                            <a href="#"
+                               class="like">{{ Auth::user()->likes()->where('post_id', $post->id)->first() ? Auth::user()->likes()->where('post_id', $post->id)->first()->like == 1 ? ' This post like you and': 'like' : 'Like' }}</a>
+                            <?php $conter = 0; ?>
+
+                            @foreach($like as $likes)
+                                @if($likes == $post->id)
+                                    <?php $conter++;
+                                    ?>
+                                @endif
+                            @endforeach
+                            <?php if ($conter !== 0) {
+                                echo $conter . " people";
+                            } ?>
+
+                            |
+                            <a href="#"
+                               class="like">{{ Auth::user()->likes()->where('post_id', $post->id)->first() ? Auth::user()->likes()->where('post_id', $post->id)->first()->like == 0 ? 'You don`t like this post': 'Dislike' : 'Dislike' }}</a>
+
                             @if(Auth::user()->id == $post->user_id)
                                 |
                                 <a class="edit" href="#">Edit</a> |
                                 <a href="{{ route('post.delete', ['post_id' => $post ] )}}">Delete</a>
                             @endif
+
                         </div>
                     </div>
                 </article>
@@ -148,6 +167,7 @@
     <script>
         var token = '{{  Session::token() }}';
         var userUrl = '{{ route('post.Create.User') }}';
-        var url = '{{ route('edit') }}';
+        var urlEdit = '{{ route('edit') }}';
+        var urlLike = '{{ route('like') }}';
     </script>
 @endsection

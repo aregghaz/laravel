@@ -14,9 +14,7 @@
     <div class="row">
         <div class="col-md-4 col-md-offset-4 alert alert-success" role="alert">
             <ul>
-
-                    <li>{{ Session::get('message') }}</li>
-
+                <li>{{ Session::get('message') }}</li>
             </ul>
         </div>
     </div>

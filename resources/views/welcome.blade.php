@@ -1,7 +1,6 @@
 @extends('page.index')
-
 @section('title')
-    welcome!
+    Welcome
 @endsection
 @section('content')
 @include('includes.message')

@@ -14,12 +14,14 @@ Class UserController extends Controller
 {
     public function registration(Request $request)
     {
+        /*  validation  */
         $this->validate($request, [
             'email' => 'required|email|unique:users',
             'first_name' => 'required|max:30',
             'last_name' => 'required|max:30',
             'password' => 'required|min:4'
         ]);
+        /*  creating Request  */
         $email = $request['email'];
         $first_name = $request['first_name'];
         $last_name = $request['last_name'];
@@ -29,25 +31,28 @@ Class UserController extends Controller
         $user->first_name = $first_name;
         $user->last_name = $last_name;
         $user->password = $password;
+        /*  saving  */
         $user->save();
         Auth::login($user);
         return redirect()->route('post.Create.User')->with(['userId' => $request['email']]);
     }
-
+    /*  login */
     public function login(Request $request)
     {
         $email = $request['email'];
+        /*  login  validation */
         $this->validate($request, [
             'email' => 'required',
             'password' => 'required'
         ]);
+        /*  checking   */
         if (Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
 
             return redirect()->route('post.Create.User')->with(['userId' => $request['email']]);
         }
         return redirect()->back();
     }
-
+    /*  logout */
     public function getLogOut()
     {
         Auth::logout();
@@ -63,12 +68,15 @@ Class UserController extends Controller
     /*     Editing  Account         */
     public function editAccount(Request $request)
     {
+        /*  creating  Request  */
         $first_name = $request['firstName'];
         $last_name = $request['lastName'];
+        /*  updating  */
         DB::table('users')
             ->where('id', Auth::user()->id)
             ->update(['first_name' => $first_name, 'last_name' => $last_name]);
         $file = $request->file('image');
+        /*  creating  random word for image */
         function random_word()
         {
             $symbols = "QWERTYUIOsdfghjklZXCVBNM";
@@ -80,14 +88,14 @@ Class UserController extends Controller
             }
             return $word;
         }
-
         $fileName = random_word() . ".jpg";
+        /*  inserting name in to the table image */
         DB::table('table_image')->insert(
             array('email' => Auth::user()->email, 'name' => $fileName));
+        /*  checking img and inserting in to the storage */
         if ($file) {
             Storage::disk('local')->put($fileName, File::get($file));
         }
         return redirect()->route('account');
-
     }
 }

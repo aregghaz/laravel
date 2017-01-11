@@ -1,6 +1,6 @@
 @extends('page.index')
 @section('title')
-    {{  $user ->first_name }} {{  $user ->last_name }} account
+     account
 @endsection
 @section('content')
     @include('includes.message')
@@ -20,9 +20,7 @@
         <input type="hidden" name="_token" value="{{  Session::token() }}">
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
-
     <div class="container links">
         <a href="{{ route('userlink' , ['userEmail' =>  $user->email ]) }}" class="active ">Back to home page</a>
     </div>
-
 @endsection
