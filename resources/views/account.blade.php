@@ -21,6 +21,6 @@
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
     <div class="container links">
-        <a href="{{ route('userlink' , ['userEmail' =>  $user->email ]) }}" class="active ">Back to home page</a>
+        <a href="{{ route('userlink' , array('userEmail' =>  $user->email)) }}" class="active ">Back to home page</a>
     </div>
 @endsection

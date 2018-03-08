@@ -12,9 +12,8 @@ use Illuminate\Support\Facades\Storage;
 
 Class UserController extends Controller
 {
-    public function registration(Request $request)
+    public function registration(Request $request, User $user)
     {
-        /*  validation  */
         $this->validate($request, [
             'email' => 'required|email|unique:users',
             'first_name' => 'required|max:30',
@@ -31,15 +30,18 @@ Class UserController extends Controller
         $user->first_name = $first_name;
         $user->last_name = $last_name;
         $user->password = $password;
-        /*  saving  */
         $user->save();
+        /*  saving  */
+//        $user->save();
+//        $user = new User();
+//        $user->store();
         Auth::login($user);
         return redirect()->route('post.Create.User')->with(['userId' => $request['email']]);
     }
+
     /*  login */
     public function login(Request $request)
     {
-        $email = $request['email'];
         /*  login  validation */
         $this->validate($request, [
             'email' => 'required',
@@ -52,6 +54,7 @@ Class UserController extends Controller
         }
         return redirect()->back();
     }
+
     /*  logout */
     public function getLogOut()
     {
@@ -72,23 +75,11 @@ Class UserController extends Controller
         $first_name = $request['firstName'];
         $last_name = $request['lastName'];
         /*  updating  */
-        DB::table('users')
-            ->where('id', Auth::user()->id)
-            ->update(['first_name' => $first_name, 'last_name' => $last_name]);
+        User::where('id', Auth::user()->id)->update(['first_name' => $first_name, 'last_name' => $last_name]);
         $file = $request->file('image');
         /*  creating  random word for image */
-        function random_word()
-        {
-            $symbols = "QWERTYUIOsdfghjklZXCVBNM";
-            $i = 0;
-            $word = "";
-            while ($i < 15) {
-                $word .= $symbols[mt_rand(0, strlen($symbols) - 1)];
-                $i++;
-            }
-            return $word;
-        }
-        $fileName = random_word() . ".jpg";
+
+        $fileName = $this->random_word() . ".jpg";
         /*  inserting name in to the table image */
         DB::table('table_image')->insert(
             array('email' => Auth::user()->email, 'name' => $fileName));
@@ -97,5 +88,18 @@ Class UserController extends Controller
             Storage::disk('local')->put($fileName, File::get($file));
         }
         return redirect()->route('account');
+
+    }
+
+    private function random_word()
+    {
+        $symbols = "QWERTYUIOsdfghjklZXCVBNM";
+        $i = 0;
+        $word = "";
+        while ($i < 15) {
+            $word .= $symbols[mt_rand(0, strlen($symbols) - 1)];
+            $i++;
+        }
+        return $word;
     }
 }

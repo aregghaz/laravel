@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 
 use App\Like;
 use App\Post;
+use App\User;
+use App\Friends;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,10 +24,10 @@ class PostController extends Controller
             $userEmail = Auth::user()->email;
         }
         /* getting friends list  */
-        $friends = DB::table('freands')->where('my_email', Auth::user()->email)->lists('freand_email');
-        $usersFriend = DB::table('users')->whereIn('email', $friends)->get();
+        $friends = Friends::where('my_email', Auth::user()->email)->lists('friend_email');
+        $usersFriend = User::whereIn('email', $friends)->get();
         /* getting users list  */
-        $users = DB::table('users')->get();
+        $users = User::all();
         /* getting users info */
         $userInfo = DB::table('users')->where('email', $userEmail)->get();
         /* getting posts likes  */
@@ -40,6 +42,12 @@ class PostController extends Controller
 
 
     /* deleting posts by id */
+
+    /**
+     *
+     * @param $post_id
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function getDeletePost($post_id)
     {
         $userId = DB::table('posts')->where('id', $post_id)->value('email');
@@ -51,6 +59,11 @@ class PostController extends Controller
         return redirect()->route('post.Create.User')->with(['message' => 'Succesfulle Delete', 'userId' => $userId]);
     }
     /* sending posts to data base */
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function userSendId(Request $request)
     {
         /* validation */
@@ -60,9 +73,9 @@ class PostController extends Controller
         /* error message  */
         $message = 'There was an error';
         /* creating Request post  */
-        $authName = Auth::user();
-        $lastName = $authName->last_name;
-        $firstName = $authName->first_name;
+        $objUser = Auth::user();
+        $lastName =  $objUser->last_name;
+        $firstName =  $objUser->first_name;
         $name = $firstName . " " . $lastName;
         $post = new Post();
         $post->body = $request['body'];
@@ -127,10 +140,9 @@ class PostController extends Controller
         /* getting request of user */
         $userEmail = $request['friendEmail'];
         /* creating users table foreach */
-        if(empty(DB::table('freands')->where(['freand_email' => $userEmail, 'my_email' => Auth::user()->email])->orWhere(['my_email' => $userEmail, 'freand_email' => Auth::user()->email]))) {
-        DB::table('freands')->insert(['freand_email' => $userEmail, 'my_email' => Auth::user()->email]);
-        DB::table('freands')->insert(['my_email' => $userEmail, 'freand_email' => Auth::user()->email]);
-        }
+        DB::table('friends')->insert(['friend_email' => $userEmail, 'my_email' => Auth::user()->email]);
+        DB::table('friends')->insert(['my_email' => $userEmail, 'friend_email' => Auth::user()->email]);
+
         return redirect()->route('post.Create.User');
     }
 
@@ -143,7 +155,14 @@ class PostController extends Controller
         $fromUserId = Auth::user()->id;
         $created_at = date('Y-m-d');
         /* inserting in to the table  */
-        DB::table('messages')->insert(['from_id' => $fromUserId, 'to_id' => $toUserID, 'message' => $message, 'created_at' => $created_at]);
+        $arrInsert = array(
+            'from_id' => $fromUserId,
+            'to_id' => $toUserID,
+            'message' => $message,
+        );
+        $arrInsert['created_at'] = $created_at;
+
+        DB::table('messages')->insert($arrInsert);
         return redirect()->route('post.Create.User');
     }
 
@@ -158,7 +177,7 @@ class PostController extends Controller
             $userId = Session::get('userId');
         }
         /* getting friends  */
-        $friends = DB::table('freands')->where(['my_email' => Auth::user()->email])->lists('freand_email');
+        $friends = DB::table('friends')->where(['my_email' => Auth::user()->email])->lists('friend_email');
         $friend = DB::table('users')->whereIn('email', $friends)->get();
         /* getting info which user will be send message  */
         $user = DB::table('users')->where('id', $userId)->get();
