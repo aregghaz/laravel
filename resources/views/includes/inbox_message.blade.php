@@ -35,6 +35,7 @@
                         </span>
                     </div>
                 @endforeach
+<<<<<<< HEAD
                 <form action="{{ route('Message') }}" method="post">
                     <div class="form-group">
                 <textarea name="messageText" id="Text" class="form-control" rows="5"
@@ -55,4 +56,28 @@
             @endif
         </div>
     </div>
+=======
+            @else
+                you dont have any message
+            @endif
+        </div>
+        <form action="{{ route('Message') }}" method="post">
+            <div class="form-group">
+                <textarea name="messageText" id="Text" class="form-control" rows="5"
+                          title="message">
+                </textarea>
+            </div>
+            <?php
+            if(!empty($userId)) {  ?>
+            <input type="hidden" id="userId" name="userId" value="<?php echo $userId;?>">
+            <?php } ?>
+            <div class="form-group">
+
+                <button type="submit" id="inboxMessage" class="btn btn-primary">Send Message</button>
+            </div>
+            <input type="hidden" name="_token" value="{{  Session::token() }}">
+        </form>
+    </div>
+
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
 @endsection

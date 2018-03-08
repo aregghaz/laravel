@@ -12,8 +12,39 @@ use Session;
 
 class PostController extends Controller
 {
+<<<<<<< HEAD
     /* Creating users page and returning view users */
     public function postCreatePostUser(Request $request)
+=======
+    /* Creating post for users and returning view users */
+    public function postCreatePostUser(Request $request)
+    {
+
+        if (!empty($request['userEmail'])) {
+            $userId = $request['userEmail'];
+        } else if (Session::get('userId')) {
+            $userId = Session::get('userId');
+        } else {
+            $userId = Auth::user()->email;
+        }
+        $friends = DB::table('freands')->where('my_email', Auth::user()->email)->lists('freand_email');
+        $usersFriend = DB::table('users')->whereIn('email', $friends)->get();
+        $users = DB::table('users')->get();
+        $posts = DB::table('users')->where('email', $userId)->get();
+        $like = DB::table('likes')->where('email', $userId)->lists('post_id');
+        $po = Post::where('email', $userId)->get();
+        if (Session::get('images')) {
+            $images = Session::get('images');
+            return view('users', ['users' => $users, 'po' => $po, 'posts' => $posts, 'images' => $images, 'friend' => $usersFriend, 'like' => $like ]);
+        }
+        return view('users', ['users' => $users, 'po' => $po, 'posts' => $posts, 'friend' => $usersFriend, 'like' => $like]);
+    }
+
+
+
+    /* deleting posts by id */
+    public function getDeletePost($post_id)
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
     {
         /* Checking */
         if (!empty($request['userEmail'])) {
@@ -40,6 +71,7 @@ class PostController extends Controller
         return view('users', ['users' => $users, 'posts' => $posts, 'userInfo' => $userInfo, 'images' => $images, 'friend' => $usersFriend, 'like' => $like]);
     }
 
+<<<<<<< HEAD
 
     /* deleting posts by id */
 
@@ -49,6 +81,10 @@ class PostController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      */
     public function getDeletePost($post_id)
+=======
+    /* editing  posts  */
+    public function postEditPost(Request $request)
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
     {
         $userId = DB::table('posts')->where('id', $post_id)->value('email');
         $post = Post::where('id', $post_id)->first();
@@ -60,10 +96,14 @@ class PostController extends Controller
     }
     /* sending posts to data base */
 
+<<<<<<< HEAD
     /**
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
+=======
+    /* sending posts to data base */
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
     public function userSendId(Request $request)
     {
         /* validation */
@@ -90,6 +130,7 @@ class PostController extends Controller
         return redirect()->route('post.Create.User')->with(['message' => $message, 'userId' => $userId]);
 
     }
+<<<<<<< HEAD
     /* editing  posts  */
     public function postEditPost(Request $request)
     {
@@ -113,6 +154,10 @@ class PostController extends Controller
 
 
     /* getting all image users */
+=======
+
+    /* geting all image users */
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
     public function userAllImage(Request $request)
     {
         /* getting request */
@@ -154,6 +199,7 @@ class PostController extends Controller
         $toUserID = $request['userId'];
         $fromUserId = Auth::user()->id;
         $created_at = date('Y-m-d');
+<<<<<<< HEAD
         /* inserting in to the table  */
         $arrInsert = array(
             'from_id' => $fromUserId,
@@ -183,6 +229,27 @@ class PostController extends Controller
         $user = DB::table('users')->where('id', $userId)->get();
         /* getting  users  message  */
         $message = DB::table('messages')->where(['from_id' => Auth::user()->id, 'to_id' => $userId])->orWhere(['from_id' => $userId, 'to_id' => Auth::user()->id])->get();
+=======
+        DB::table('messages')->insert(['from_id' => $fromUserId, 'to_id' => $toUserID, 'message' => $message, 'created_at' => $created_at]);
+        return redirect()->route('post.Create.User');
+    }
+
+
+    /*creating inbox  */
+    public function inbox(Request $request)
+    {
+        if (empty(Session::get('userId'))) {
+            $userId = $request['userId'];
+        }else{
+            $userId = Session::get('userId');
+        }
+
+
+        $friends = DB::table('freands')->where(['my_email' => Auth::user()->email])->lists('freand_email');
+        $friend = DB::table('users')->whereIn('email', $friends)->get();
+        $user = DB::table('users')->where('id', $userId)->get();
+        $message = DB::table('messages')->where(['from_id' => Auth::user()->id, 'to_id' =>$userId])->orWhere(['from_id' => $userId, 'to_id' => Auth::user()->id])->get();
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
         return view('includes.inbox_message', ['friends' => $friend, 'message' => $message, 'user' => $user, 'userId' => $userId]);
     }
 
@@ -190,12 +257,18 @@ class PostController extends Controller
     /* sending message to users in inbox  */
     public function message(Request $request)
     {
+<<<<<<< HEAD
         /* getting  requests   */
+=======
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
         $message = $request['messageText'];
         $toUserID = $request['userId'];
         $fromUserId = Auth::user()->id;
         $created_at = date("Y-m-d H:i:s");
+<<<<<<< HEAD
         /* inserting in to the table */
+=======
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
         DB::table('messages')->insert(['from_id' => $fromUserId, 'to_id' => $toUserID, 'message' => $message, 'created_at' => $created_at]);
         return redirect()->route('inbox')->with(['userId' => $toUserID]);
     }
@@ -203,20 +276,32 @@ class PostController extends Controller
     /* like or dislike  */
     public function like(Request $request)
     {
+<<<<<<< HEAD
         /* getting  requests   */
+=======
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
         $postId = $request['postId'];
         $postEmail = $request['email'];
         $isLike = $request['isLike'] === 'true';
         $update = false;
+<<<<<<< HEAD
         /* checking posts   */
+=======
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
         $post = Post::find($postId);
         if (!$post) {
             return null;
         }
         $user = Auth::user();
+<<<<<<< HEAD
         /* checking if we already like this posts   */
         $like = $user->likes()->where('post_id', $postId)->first();
         /*  if we already like this posts   */
+=======
+        $like = $user->likes()->where('post_id', $postId)->first();
+
+
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
         if ($like) {
             $already_like = $like->like;
             $update = true;
@@ -226,9 +311,13 @@ class PostController extends Controller
                 $like->delete();
                 return null;
             }
+<<<<<<< HEAD
         }
         /*  creating new like requests   */
         else {
+=======
+        } else {
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
             $like = new Like();
         }
         $like->like = $isLike;

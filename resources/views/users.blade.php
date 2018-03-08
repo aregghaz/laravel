@@ -52,24 +52,39 @@
                                     </div>
                                 </div>
                             </div>
+<<<<<<< HEAD
                             <!--  Adding friend  -->
                             <form action="{{ route('addFriend') }}" method="post">
                                 <input type="hidden" name="friendEmail" value="{{ $task-> email }}">
+=======
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
 
-                                <button class="btn btn-primary" type="submit">Add Friend
-                                </button>
 
+<<<<<<< HEAD
                                 <input type="hidden" name="_token" value="{{  Session::token() }}">
                             </form>
                         @else
                         <!--  if it  Auth user  -->
                             <form action="{{ route('inbox') }}" method="get">
                                 <button class="btn btn-primary" type="submit">inbox</button>
+=======
+
+
+                        @else
+                            <form action="{{ route('inbox') }}" method="get">
+                                <button class="btn btn-primary" type="submit">inbox</button>
+
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
                                 <input type="hidden" name="_token" value="{{  Session::token() }}">
                             </form>
                         @endif
                         <form action="{{ route("userImage") }}" method="get">
+<<<<<<< HEAD
                             <input type="hidden" name="email" id="userEmailforLike" value="{{ $task -> email }}">
+=======
+                            <input type="hidden" name="email" id="userEmailforLike"
+                                   value="{{ $task -> email }}">
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
                             <input type="hidden" name="_token" value="{{  Session::token() }}">
                             <button class="btn btn-primary" type="submit">Image</button>
                         </form>
@@ -106,23 +121,38 @@
                 <article class="post" data-postid="{{ $post->id }}">
                     <div class="list-group-item active">
                         <p class="list-group-item-heading">{{ $post->body }}</p>
+<<<<<<< HEAD
                         <p class="list-group-item-text"> posted by
                             {{$post->name }}on {{ $post->created_at }}
                         </p>
+=======
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
                         <div class="interaction">
 
                             <a href="#"
                                class="like">{{ Auth::user()->likes()->where('post_id', $post->id)->first() ? Auth::user()->likes()->where('post_id', $post->id)->first()->like == 1 ? ' This post like you and': 'like' : 'Like' }}</a>
+<<<<<<< HEAD
                             <?php $conter = 0; ?>
+=======
+                            <?php $conter =0; ?>
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
 
                             @foreach($like as $likes)
                                 @if($likes == $post->id)
                                     <?php $conter++;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
                                     ?>
                                 @endif
                             @endforeach
                             <?php if ($conter !== 0) {
+<<<<<<< HEAD
                                 echo $conter . " people";
+=======
+                                echo "and ".$conter." people";
+>>>>>>> 82b89136ab3d143812237753f65ae0c761ef8553
                             } ?>
 
                             |
